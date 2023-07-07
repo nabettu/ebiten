@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <script src="./wasm_exec.js"></script>
+  </head>
+  <body>
+    <script>
+    // Polyfill
+    if (!WebAssembly.instantiateStreaming) {
+        WebAssembly.instantiateStreaming = async (resp, importObject) => {
+            const source = await (await resp).arrayBuffer();
+            return await WebAssembly.instantiate(source, importObject);
+        };
+    }
+    
+    const go = new Go();
+    WebAssembly.instantiateStreaming(fetch("3mokunarabe.wasm"), go.importObject).then(result => {
+        go.run(result.instance);
+    });
+    </script>
+  </body>
+</html>
